@@ -2,13 +2,19 @@ from BaseHTTPServer import BaseHTTPRequestHandler
 from BaseHTTPServer import HTTPServer
 import urlparse
 from Hello import Hello
+import re
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed_path = urlparse.urlparse(self.path)
         path = parsed_path.path
         query = urlparse.parse_qs(parsed_path.query)
-        if (path == '/hello'):
+        m = re.match(r'/greeting/(\w+)', path)
+        if bool(m):
+            hello = Hello()
+            name = m.group(1)
+            message = hello.say(name)
+        elif path == '/hello':
             hello = Hello()
             name = query.get('name');
             if name is None:
