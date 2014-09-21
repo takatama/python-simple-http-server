@@ -25,10 +25,19 @@ class RequestHandler(BaseHTTPRequestHandler):
         parsed_path = urlparse.urlparse(self.path)
         path = parsed_path.path
         query = urlparse.parse_qs(parsed_path.query)
+        for url, func in gets.iteritems():
+            print url
+            m = re.match(url, path)
+            print bool(m)
+            if bool(m):
+                message = func(self, query)
+                self.send_response(200) 
+                self.end_headers()
+                self.wfile.write(message)
+                return
+
         m = re.match(r'/greeting/(\w+)', path)
-        if gets.has_key(path):
-            message = gets[path](self, query)
-        elif bool(m):
+        if bool(m):
             hello = Hello()
             name = m.group(1)
             message = hello.say(name)
