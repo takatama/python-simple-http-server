@@ -6,12 +6,12 @@ from Hello import Hello
 
 gets = {}
 
-class RequestHandler(BaseHTTPRequestHandler):
+def get(url):
+    def _(f):
+        gets[url] = f
+    return _
 
-    def get(url):
-        def _(f):
-            gets[url] = f
-        return _
+class RequestHandler(BaseHTTPRequestHandler):
 
     @get('/hello')
     def say(self, query):
