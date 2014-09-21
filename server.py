@@ -22,19 +22,6 @@ def get(url):
 
 class RequestHandler(BaseHTTPRequestHandler):
 
-    @get('/hello')
-    def say(self, query, *args):
-        hello = Hello()
-        name = query.get('name');
-        if name is None:
-            return hello.say()
-        return hello.say(', '.join(name))
-
-    @get('/greeting/:name')
-    def greeting(self, query, *args):
-        hello = Hello()
-        return hello.say(args[0])
-
     def do_GET(self):
         parsed_path = urlparse.urlparse(self.path)
         path = parsed_path.path
@@ -51,6 +38,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write('404 Not Found')
 
-address = ('', 8888)
-server = HTTPServer(address, RequestHandler)
-server.serve_forever()
+def run(host = '', port = 8888):
+    address = (host, port)
+    server = HTTPServer(address, RequestHandler)
+    server.serve_forever()
+
