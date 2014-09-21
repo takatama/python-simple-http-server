@@ -2,4 +2,4 @@ from Template import Template
 
 class Hello:
     def say(self, name = 'World'):
-        return Template.generate('hello.tpl', {'name': name})
+        return Template.render('hello.tpl', {'name': name})
