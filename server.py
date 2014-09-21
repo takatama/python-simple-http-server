@@ -10,7 +10,11 @@ class RequestHandler(BaseHTTPRequestHandler):
         query = urlparse.parse_qs(parsed_path.query)
         if (path == '/hello'):
             hello = Hello()
-            message = hello.say(query)
+            name = query.get('name');
+            if name is None:
+                message = hello.say()
+            else:
+                message = hello.say(', '.join(name))
         else:
             self.send_response(404) 
             self.end_headers()
