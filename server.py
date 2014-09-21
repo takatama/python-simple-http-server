@@ -1,15 +1,14 @@
-from http.server import BaseHTTPRequestHandler
-from http.server import HTTPServer
-from urllib.parse import urlparse
-from urllib.parse import parse_qs
 import re
+from BaseHTTPServer import BaseHTTPRequestHandler
+from BaseHTTPServer import HTTPServer
+import urlparse
 from Hello import Hello
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        parsed_path = urlparse(self.path)
+        parsed_path = urlparse.urlparse(self.path)
         path = parsed_path.path
-        query = parse_qs(parsed_path.query)
+        query = urlparse.parse_qs(parsed_path.query)
         m = re.match(r'/greeting/(\w+)', path)
         if bool(m):
             hello = Hello()
@@ -25,11 +24,11 @@ class RequestHandler(BaseHTTPRequestHandler):
         else:
             self.send_response(404) 
             self.end_headers()
-            self.wfile.write(bytes('404 Not Found','UTF-8'))
+            self.wfile.write('404 Not Found')
             return
         self.send_response(200) 
         self.end_headers()
-        self.wfile.write(bytes(message, 'UTF-8'))
+        self.wfile.write(message)
         return
 
 address = ('', 8888)
