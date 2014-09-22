@@ -16,15 +16,15 @@ class Template:
                     indent += '    '
                 continue
             while True:
-                m = re.search(r'\{\{(\w+)\}\}', line)
+                m = re.search(r'\{\{(\S+)\}\}', line)
                 if not bool(m):
                     break
-                source.append(indent + 'buf.append("%s")\n' % line[:m.start()])
-                source.append(indent + 'buf.append(%s)\n' % m.group(1))
+                source.append(indent + "buf.append('%s')\n" % line[:m.start()])
+                source.append(indent + "buf.append(%s)\n" % m.group(1))
                 line = line[m.end():]
             if len(line) > 0:
-                source.append(indent + 'buf.append("%s\\n")\n' % line)
-        source.append('buf = "".join(buf)')
+                source.append(indent + "buf.append('%s\\n')\n" % line)
+        source.append("buf = ''.join(buf)")
         code = compile(''.join(source), '<string>', 'exec')
         exec code in model
         return model['buf']

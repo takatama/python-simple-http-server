@@ -44,9 +44,15 @@ class RequestHandler(BaseHTTPRequestHandler):
             m = re.match(url, path)
             if bool(m):
                 message = func(self, data, *m.groups())
-                self.send_response(200)
-                self.end_headers()
-                self.wfile.write(message)
+                if message.startswith('redirect:/'):
+                    to = message.replace('redirect:/', '')
+                    self.send_response(302)
+                    self.send_header('Location', to)
+                    self.end_headers()
+                else:
+                    self.send_response(200)
+                    self.end_headers()
+                    self.wfile.write(message)
                 return
         self.send_response(404)
         self.end_headers()
