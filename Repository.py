@@ -47,7 +47,6 @@ class Repository:
 
     def save(self, domain_object):
         try:
-            print domain_object
             slots = list(domain_object.__slots__)
             slots.remove('id') #special column
             slots.remove('created_at') #special column
@@ -64,7 +63,21 @@ class Repository:
             cursor = self.connection.cursor()
             tuples = cursor.execute('SELECT * FROM %s' % self._table_name, ()).fetchall()
             return tuples
-            #comments = [Comment(item[0], item[1], item[2]) for item in tuples]
-            #return comments
         except Exception as e:
             raise RepositoryException(e)
+
+    def find_one(self, id):
+        try:
+            cursor = self.connection.cursor()
+            tuples = cursor.execute('SELECT * FROM %s WHERE id = ?' % self._table_name, (id,)).fetchone()
+            return tuples
+        except Exception as e:
+            raise RepositoryException(e)
+
+    def delete(self, domain_object):
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute('DELETE FROM %s WHERE id = ?' % self._table_name, (domain_object.id,))
+        except Exception as e:
+            raise RepositoryException(e)
+        return self
