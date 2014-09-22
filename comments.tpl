@@ -5,7 +5,7 @@
   <body>
     <ul>
 % for comment in comments:
-      <li>{{str(comment.comment_id)}} : {{comment.comment}} ({{comment.created_at}})</li>
+      <li>{{str(comment.id)}} : {{comment.comment}} ({{comment.created_at}})</li>
 % end
     </ul>
     <form method="POST" action="/comments">
