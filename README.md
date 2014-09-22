@@ -61,12 +61,10 @@ def hello_3_times(self, query, *args):
 $ python app.py:
 
 ### BBS example
-At first, create comments database file named as comments.db.
+At first, you create a comments database file named as comments.db.
 
 $ sqlite3 comments.db
-SQLite version 3.7.13 2012-07-17 17:46:21
-Enter ".help" for instructions
-Enter SQL statements terminated with a ";"
+
 sqlite> CREATE TABLE comments(id INTEGER PRIMARY KEY AUTOINCREMENT , comment TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
 
 comments.tpl:
