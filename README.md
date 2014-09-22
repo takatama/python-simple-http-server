@@ -60,7 +60,9 @@ def hello_3_times(self, query, *args):
 
 $ python app.py:
 
-### BBS example
+## Example
+
+### BBS
 At first, you create a comments database file named as comments.db.
 
 $ sqlite3 comments.db
@@ -76,7 +78,7 @@ comments.tpl:
   <body>
     <ul>
 % for comment in comments:
-      <li>{{str(comment.comment_id)}} : {{comment.comment}} ({{comment.created_at}})</li>
+      <li>{{str(comment.id)}} : {{comment.comment}} ({{comment.created_at}})</li>
 % end
     </ul>
     <form method="POST" action="/comments">
@@ -86,42 +88,39 @@ comments.tpl:
 </html>
 ```
 
+Domain objects must use __slot__ for defining its attributes which are same as data base column names.
+
 comments.py:
 ```python
 from server import get, post, run
 from Template import Template
+from Repository import Repository, RepositoryException
 
 
-class Comment:
-    def __init__(self, comment_id, comment, created_at):
-        self.comment_id = comment_id
+class Comment(object):
+    __slots__ = ['id', 'comment', 'created_at']
+
+    def __init__(self, id, comment, created_at):
+        self.id = id
         self.comment = comment
         self.created_at = created_at
 
-import sqlite3
 
 db_file = 'comments.db'
-insert_sql = 'INSERT INTO comments(comment) values (?)'
-select_sql = 'SELECT * FROM comments'
-
-def __execute(query ,parameters):
-    with sqlite3.connect(db_file) as connection:
-        cursor = connection.cursor()
-        cursor.execute(query, parameters)
-        connection.commit()
-        fetched_list = cursor.fetchall()
-        return fetched_list
+table_name = 'comments'
 
 @post('/comments')
 def create_comment(self, data, *args):
     comment = ','.join(data["comment"])
-    __execute(insert_sql, (comment,))
-    print "Comment '%s' is created.\n" % comment
+    with Repository(db_file, table_name) as repository:
+        repository.save(Comment(None, comment, None)).complete()
     return 'redirect:/comments'
 
 @get('/comments')
 def list_comments(self, query, *args):
-    comments = [Comment(item[0], item[1], item[2]) for item in __execute(select_sql, ())]
+    with Repository(db_file, table_name) as repository:
+        comments_tuple = repository.find_all()
+        comments = [Comment(item[0], item[1], item[2]) for item in comments_tuple]
     return Template.render('comments.tpl', {"comments": comments})
 
 run(host = '', port = 8888)
