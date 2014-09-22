@@ -2,7 +2,9 @@ import sqlite3
 
 
 def get_connection(db_flie):
-    return sqlite3.connect(db_flie)
+    connection = sqlite3.connect(db_flie)
+    connection.text_factory = str
+    return connection
 
 class RepositoryException(Exception):
     def __init__(self, message, *errors):

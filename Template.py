@@ -2,7 +2,7 @@ class Template:
     @staticmethod
     def render(file_name, model = {}):
         import re
-        source = ['buf = []\n']
+        source = ['import cgi\n', 'buf = []\n']
         with open(file_name) as f:
             data = f.read()
         indent = ''
@@ -20,7 +20,7 @@ class Template:
                 if not bool(m):
                     break
                 source.append(indent + "buf.append('%s')\n" % line[:m.start()])
-                source.append(indent + "buf.append(%s)\n" % m.group(1))
+                source.append(indent + "buf.append(cgi.escape(%s))\n" % m.group(1))
                 line = line[m.end():]
             if len(line) > 0:
                 source.append(indent + "buf.append('%s\\n')\n" % line)
